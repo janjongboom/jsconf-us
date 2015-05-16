@@ -16,6 +16,8 @@
       height: 25px;
       background-color: rgba(255, 0, 0, 0.5);
       border-radius: 25px;
+      top: 0;
+      left: 0;
     }
     
     #connected {
@@ -100,8 +102,9 @@ b.play(
           dot.dataset.left = ((gamma + 70) / 140);
           dot.dataset.top = ((beta + 70) / 140);
           
-          dot.style.left = dot.dataset.left * 100 + 'vw';
-          dot.style.top = 'calc(' + dot.dataset.top * 100 + 'vh - 50px)';
+          dot.style.transform = 
+            'translateX(' + dot.dataset.left * 100 + 'vw) ' +
+            'translateY(' + dot.dataset.top * 100 + 'vh)';
         }
         
         document.querySelector('#clients').textContent = Object.keys(clientList).length;

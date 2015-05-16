@@ -27,20 +27,6 @@
       x:0, y:0, prevX:0, prevY:0,
       isOn : false,
       name: 'Phone',
-      _onmousemove : function( e ) {
-        // console.log( e )
-        // var prefix = '', upper = ''
-
-        // _m[ 'prev' + upper + 'X' ] = storeX//_m[ prefix + ( prefix === ''  ? 'x' : 'X' )]  
-        // _m[ 'prev' + upper + 'Y' ] = storeY//_m[ prefix + ( prefix === ''  ? 'y' : 'Y' )]  
-        // storeX = _m[ prefix  + ( prefix === '' ? 'x' : 'X' ) ] = e.pageX - window.scrollX// / _m.ww 
-        // storeY = _m[ prefix  + ( prefix === '' ? 'y' : 'Y' ) ] = e.pageY - window.scrollY// / _m.wh 
-        
-        // // console.log( e )
-        // if( typeof _m.onvaluechange === 'function' ) {
-        //   _m.onvaluechange()
-        // }
-      },
       on: function() {
         _m._isOn = true;
         
@@ -55,15 +41,15 @@
           
           _m['prevX'] = storeX;
           _m['prevY'] = storeY;
-          storeX = _m.x = avg.left * mappingProperties.x.max;
-          storeY = _m.y = avg.top * mappingProperties.y.max;
+          storeX = _m.x = avg.left * mappingProperties.x.max | 0;
+          storeY = _m.y = avg.top * mappingProperties.y.max | 0;
           
           console.log('setting to', storeX, storeY);
           
           if( typeof _m.onvaluechange === 'function' ) {
             _m.onvaluechange()
           }
-        }, 500);
+        }, 200);
       },
       off: function() {
         _m._isOn = false;
