@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JSConf.us Gibber demo</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    
+    .dot {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background-color: rgba(255, 0, 0, 0.5);
+      border-radius: 25px;
+    }
+    
+    #connected {
+      padding: 10px;
+    }
+  </style>
+  
+  <script src="gibber.js"></script>
+  <script>
+    Gibber.init();
+  </script>
+  <script src="gibber-phone.js"></script>
+</head>
+
+<body>
+  <p id="connected">Clients connected: <span id="clients"></span></p>
+  
+  <script>
+a = EDrums('x*o*x*o-')
+a.pitch = Phone.X
+
+b = FM({ 
+  attack:  ms(1),
+  index:   a.Out,
+  cmRatio: Phone.X
+})
+
+b.fx.add(
+  Delay({
+    time:     Phone.X,
+    feedback: Phone.Y
+  })
+)
+
+b.play( 
+  ['c2','c2','c2','c3','c4'].random(),
+  [1/4,1/8,1/16].random(1/16,2) 
+)
+  </script>
+  
+  <script>
+    var clientList = {};
+  
+    var wsOpen = false;
+    var ws;
+    function connect() {
+      ws = new WebSocket('ws://' + location.hostname + ':9322');
+      ws.onopen = function() {
+        wsOpen = true;
+      };
+      ws.onclose = function() {
+        wsOpen = false;
+        connect();
+      };
+      ws.onmessage = function(e) {
+        var data = e.data;
+        if (typeof data === 'string') data = JSON.parse(data);
+        
+        if (data.type === 'client-gone') {
+          clientList[data.deviceId].parentNode.removeChild(clientList[data.deviceId]);
+          delete clientList[data.deviceId];
+        }
+        else if (data.type === 'deviceorientation') {
+          var dot = clientList[data.deviceId];
+          if (!dot) {
+            dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.setAttribute('data-device', data.deviceId);
+            document.body.appendChild(dot);
+            clientList[data.deviceId] = dot;
+          }
+          
+          var beta = data.beta;
+          if (beta > 70) beta = 70;
+          if (beta < -70) beta = -70;
+          
+          var gamma = data.gamma;
+          if (gamma > 70) gamma = 70;
+          if (gamma < -70) gamma = -70;
+          
+          
+          dot.dataset.left = ((gamma + 70) / 140);
+          dot.dataset.top = ((beta + 70) / 140);
+          
+          dot.style.left = dot.dataset.left * 100 + 'vw';
+          dot.style.top = 'calc(' + dot.dataset.top * 100 + 'vh - 50px)';
+        }
+        
+        document.querySelector('#clients').textContent = Object.keys(clientList).length;
+      };
+    }
+    connect();
+    
+    window.getAvg = function() {
+      var keys = Object.keys(clientList);
+      
+      var blah = keys.reduce(function(curr, id) {
+        curr.left += clientList[id].dataset.left;
+        curr.top += clientList[id].dataset.top;
+        return curr;
+      }, { left: 0, top: 0 });
+      
+      return {
+        left: blah.left / keys.length,
+        top: blah.top / keys.length,
+      };
+    }
+  </script>
+</body>
+</html>

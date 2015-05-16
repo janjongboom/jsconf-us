@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Positioning</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    body {
+      background: black;
+      font-family: 'Open Sans', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 300;
+      margin: 20px 0;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    #dot {
+      width: 25px;
+      height: 25px;
+      border-radius: 25px;
+      background: red;
+      position: absolute;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="font-size: 60px">JSConf.us</h1>
+  <p id="status">Connecting...</p>
+
+  <div id="dot"></div>
+
+  <script>
+    function getUuid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+      });
+    }
+    var deviceId = getUuid();
+
+    if ('requestWakeLock' in navigator) {
+      var lock = navigator.requestWakeLock('screen');
+      window.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          lock.unlock();
+        }
+        else {
+          lock = navigator.requestWakeLock('screen');
+        }
+      });
+    }
+
+    var wsOpen = false;
+    var ws;
+    function connect() {
+      ws = new WebSocket('ws://' + location.hostname + ':9322');
+      ws.onopen = function() {
+        wsOpen = true;
+        document.querySelector('#status').textContent = 'Connected';
+        document.querySelector('#dot').style.display = 'block';
+      };
+      ws.onclose = function() {
+        document.querySelector('#status').textContent = 'Connecting...';
+        document.querySelector('#dot').style.display = 'none';
+        wsOpen = false;
+        connect();
+      };
+    }
+    connect();
+
+    var dot = document.querySelector('#dot');
+
+    window.addEventListener('deviceorientation', function(e) {
+      var beta = e.beta;
+      if (beta > 70) beta = 70;
+      if (beta < -70) beta = -70;
+      
+      var gamma = e.gamma;
+      if (gamma > 70) gamma = 70;
+      if (gamma < -70) gamma = -70;
+      
+      dot.style.left = ((e.gamma + 70) / 140) * 100 + 'vw';
+      dot.style.top = ((beta + 70) / 140) * 100 + 'vh';
+      
+      if (wsOpen) {
+        ws.send(JSON.stringify({
+          type: 'deviceorientation',
+          alpha: e.alpha,
+          beta: e.beta,
+          gamma: e.gamma,
+          deviceId: deviceId
+        }));
+      }
+    });
+  </script>
+</body>
+</html>
