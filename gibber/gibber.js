@@ -12640,8 +12640,8 @@ var Gibber = {
     console.log( 'Loading module ' + path + '...' )
 
     if( path.indexOf( 'http:' ) === -1 ) { 
-      console.log( 'loading via post', path )
-      $.post(
+      console.log( 'loading via get', path )
+      $.get(
         Gibber.Environment.SERVER_URL + '/gibber/'+path, {},
         function( d ) {
           d = JSON.parse( d )
@@ -33722,6 +33722,7 @@ module.exports = function( Gibber ) {
     callbacks : {},
     
     newPanel : function( column ) {
+      return;
       if( typeof column === 'undefined' ) {
         if( Gibber.isInstrument ) {
           column = {
@@ -34062,7 +34063,7 @@ module.exports = function( Gibber ) {
     },
     nonGraphical: [ 'Accelerometer', 'Orientation' ],
     widget: function( props, name ) {
-      var isNonGraphical = I.nonGraphical.indexOf( name ) !== -1
+      var isNonGraphical = true;
       
       if( this.mode === 'local' ) {
         if( I.panel === null && !isNonGraphical ) {

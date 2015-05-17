@@ -1,0 +1,19 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.dot {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 0, 0, 0.5);
+  border-radius: 25px;
+  top: 0;
+  left: 0;
+}
+
+#connected {
+  padding: 10px;
+}

@@ -7,15 +7,29 @@ connect()
 var ws = require("nodejs-websocket");
 var server = ws.createServer(function(conn) {
   console.log("New connection");
+  
+  var to;
   conn.on("text", function(str) {
+    
+    if (to) {
+      clearTimeout(to);
+    }
+    
     try {
       var data = JSON.parse(str);
       if (data.deviceId) {
-        conn.deviceId = data;
+        conn.deviceId = data.deviceId;
       }
     }
     catch (ex) {}
     broadcast(str);
+
+    // no message for 2s, then treat as disconnect
+    if (conn.deviceId) {
+      to = setTimeout(function() {
+        broadcast(JSON.stringify({ type: 'client-gone', deviceId: conn.deviceId }));
+      }, 2000);
+    }
   });
   conn.on("close", function(code, reason) {
     broadcast(JSON.stringify({ type: 'client-gone', deviceId: conn.deviceId }));

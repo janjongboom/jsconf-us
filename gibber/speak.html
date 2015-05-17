@@ -16,26 +16,15 @@
   
   <script>
   
-    var a = EDrums('x*o*x*o-')
-    a.pitch = Phone.X
+  module('gibber/publications/SpeakLib');
+  setTimeout(function() {
+    var a = Speak()
+    	.say.seq( 'type a normal sentence in'.split(' '), 1/4 )
     
-    var b = FM({ 
-      attack:  ms(1),
-      index:   a.Out,
-      cmRatio: Phone.X
-    })
-    
-    b.fx.add(
-      Delay({
-        time:     Phone.X,
-        feedback: Phone.Y
-      })
-    )
-    
-    b.play( 
-      ['c2','c2','c2','c3','c4'].random(),
-      [1/4,1/8,1/16].random(1/16,2) 
-    )
+    a.note.seq( Rndf(0.5,2), 1/4 )
+    a.note( .25 )
+  }, 2000)
+
 
   </script>
   <script src="socket.js"></script>

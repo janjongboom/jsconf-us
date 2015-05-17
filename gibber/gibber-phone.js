@@ -33,9 +33,7 @@
         if (this.iv) return;
         
         this.iv = setInterval(function() {
-          console.time('getAvg');
           var avg = window.getAvg();
-          console.timeEnd('getAvg');
           
           if (isNaN(avg.left)) { return; }
           
@@ -43,8 +41,6 @@
           _m['prevY'] = storeY;
           storeX = _m.x = avg.left * mappingProperties.x.max | 0;
           storeY = _m.y = avg.top * mappingProperties.y.max | 0;
-          
-          console.log('setting to', storeX, storeY);
           
           if( typeof _m.onvaluechange === 'function' ) {
             _m.onvaluechange()
