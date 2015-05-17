@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JSConf.us Gibber demo</title>
+  <link rel="stylesheet" href="base.css">
+  
+  <script src="jquery-2.1.4.min.js"></script>
+  <script src="gibber.js"></script>
+  <script src="gibber-init.js"></script>
+  <script src="gibber.graphics.lib.js"></script>
+  <script src="gibber-phone.js"></script>
+  
+  <style>
+    html, body {
+      height: 100%;
+    }
+    canvas {
+      position: absolute !important;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <p id="connected">Clients connected: <span id="clients">0</span></p>
+  <script src="require.js"></script>
+  <script>
+  
+    var b = Drums('x*o*x*o-')
+    b.amp = Phone.X
+    
+    setInterval(function() {
+      Clock.bpm = (getAvg().top * 120 | 0) + 60;
+    }, 500);
+    
+    var c = FM('bass')
+      .note.seq( [0,0,0,7,14,13].rnd(), [1/8,1/16].rnd(1/16,2) )
+    
+    var d = Synth( 'rhodes', {amp:.35} )
+      // .chord.seq( Rndi(0,6,3), 1 )
+      .chord.seq( Rndi(0,6,3), 1 )
+      .fx.add( Delay() )
+    
+    // analysis
+    var fftSize = 32
+    var fft = FFT( fftSize )
+    
+    // visuals
+    var a = Canvas()
+    
+    a.draw = function() {
+      a.clear()
+      var numBars = fftSize / 2,
+          barHeight = ( a.height - 1 ) / numBars,
+          barColor = null, 
+          value = null
+    
+      for( var i = 0; i < numBars; i++ ) {
+        barColor = GibberColor({ h:( i / numBars ) * 255, s:255, v:255 })
+    
+        // read FFT value, which ranges from 0-255, and scale it.
+        value = ( fft[ i ] / 255 ) * a.width
+    
+        a.rectangle( 0, barHeight * i, value, barHeight )
+        a.fill( barColor.rgbString() ) 
+      }
+    }
+
+  </script>
+  <script src="socket.js"></script>
+</body>
+</html>
