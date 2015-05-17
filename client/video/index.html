@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Video Streaming</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    body {
+      background: black;
+      font-family: 'Open Sans', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 300;
+      margin: 20px 0;
+    }
+    video.rtc {
+      max-width: 100%;
+    }
+  </style>
+  
+  <script src="rtc.js"></script>
+</head>
+<body>
+  <h1 style="font-size: 60px">Video</h1>
+  
+  <div id="l-video"></div>
+
+  <script>
+  RTC({
+    signaller: location.protocol + '//' + location.hostname + ':9323',
+    constraints: {
+      video: true,
+      audio: false
+    },
+    room: 'jsconf',
+    localContainer: '#l-video',
+    remoteContainer: null
+  });
+  </script>
+</body>
+</html>

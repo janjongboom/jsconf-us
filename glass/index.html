@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Video Receiver</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    body {
+      background: black;
+      font-family: 'Open Sans', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      text-align: left;
+      font-weight: 300;
+      margin: 20px 20px;
+    }
+    #r-video {
+      position: absolute;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+    }
+    video.rtc {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      filter: url('#pictureFilter');
+    }
+  </style>
+  
+  <script src="rtc.js"></script>
+</head>
+<body>
+  <h1 style="font-size: 60px">Glass</h1>
+  
+  <div id="r-video"></div>
+
+<svg id='image' version="1.1" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="pictureFilter">
+  <!-- Convert to graysclae -->
+  <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"/> 
+
+   <!--The result of the feColorMatrix will be fed into the feComponentTransfer -->
+  <feComponentTransfer >
+    <feFuncG type="table" tableValues="0 1 0 1"/>
+    <feFuncR type="table" tableValues="0 0 0.4 1"/>
+    <feFuncB type="table" tableValues="0 0 .4 1"/>
+  </feComponentTransfer>
+</filter>
+</defs>
+</svg>
+
+  <script>
+  var rtc = RTC({
+    signaller: location.protocol + '//' + location.hostname + ':9323',
+    constraints: null,
+    room: 'jsconf',
+    localContainer: null,
+    remoteContainer: '#r-video'
+  });
+  
+  rtc.on('stream:added', function(e) {
+    setTimeout(function() {
+      var ele = document.querySelector('*[data-peer=' + e + ']');
+    });
+  });
+  </script>
+</body>
+</html>

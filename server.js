@@ -51,4 +51,11 @@ process.on('uncaughtException', function (err) {
   console.error(err.stack);
 });
 
-console.log('Listening on port', 9321, 9322);
+/**
+ * SWITCHBOARD STUFF!
+ */
+var swServer = require('http').createServer();
+var switchboard = require('./switchboard')(swServer, { servelib: true });
+swServer.listen(9323, '0.0.0.0');
+
+console.log('Listening on port', 9321, 9322, 9323);
