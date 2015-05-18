@@ -1,0 +1,14 @@
+{
+  "name": "Glass Client",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "permissions": {
+    "bluetooth": {},
+    "audio-capture": {
+      "description": "Required to capture audio using getUserMedia()"
+    },
+    "video-capture": {
+      "description": "Required to capture video using getUserMedia()"
+    }
+  }
+}

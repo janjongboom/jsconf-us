@@ -34,7 +34,7 @@
       max-height: 100%;
       width: 100%;
       height: 100%;
-      filter: url('#pictureFilter');
+      filter: url('#Gothamish');
     }
   </style>
   
@@ -42,20 +42,24 @@
 </head>
 <body>
   <h1 style="font-size: 60px">Glass</h1>
+  <ul id="beacons"></ul>
   
   <div id="r-video"></div>
 
 <svg id='image' version="1.1" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<filter id="pictureFilter">
-  <!-- Convert to graysclae -->
-  <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"/> 
-
-   <!--The result of the feColorMatrix will be fed into the feComponentTransfer -->
-  <feComponentTransfer >
-    <feFuncG type="table" tableValues="0 1 0 1"/>
-    <feFuncR type="table" tableValues="0 0 0.4 1"/>
-    <feFuncB type="table" tableValues="0 0 .4 1"/>
+<filter id="Gothamish" color-interpolation-filters="sRGB">
+  <feComponentTransfer in="SourceGraphic" result="midtoneContrast">
+    <feFuncR type="table" tableValues="0 0.05 0.1 0.2 0.3 0.5 0.7 0.8 0.9 0.95 1.0" />
+  </feComponentTransfer>
+  <feColorMatrix in="midtoneContrast" result="redBWandblue" type="matrix" values="1 0 0 0 0
+          10000
+          1 0 0 0 0.03
+          0 0 0 1 0" />
+  <feGaussianBlur in="redBWandblue" stdDeviation="1" result="blurMask" />
+  <feComposite operator="arithmetic" in="redBWandblue" in2="blurMask" k2="1.3" k3="-0.3" result="postsharp" />
+  <feComponentTransfer result="finalImage" in="postsharp">
+    <feFuncB type="table" tableValues="0 0.047 0.118 0.251 0.318 0.392 0.42 0.439 0.475 0.561 0.58 0.627 0.671 0.733 0.847 0.925 1" />
   </feComponentTransfer>
 </filter>
 </defs>
@@ -67,13 +71,45 @@
     constraints: null,
     room: 'jsconf',
     localContainer: null,
-    remoteContainer: '#r-video'
+    remoteContainer: '#r-video',
+    channels: {
+      chat: true
+    }
   });
   
   rtc.on('stream:added', function(e) {
     setTimeout(function() {
       var ele = document.querySelector('*[data-peer=' + e + ']');
     });
+  });
+
+  var channels = [];
+  rtc.on('channel:opened:chat', function(id, dc) {
+    console.log('channel opened chat', dc);
+    dc.onmessage = function(evt) {
+      var beacon = JSON.parse(evt.data);
+      
+      var ele = document.querySelector('li[data-major="' + beacon.major + '"]');
+      if (!ele) {
+        ele = document.createElement('li');
+        ele.dataset.major = beacon.major;
+        document.querySelector('#beacons').appendChild(ele);
+      }
+      
+      ele.textContent = beacon.name + ' (' + beacon.distance.toFixed(2) + 'm)';
+    };
+  
+    channels.push(dc);
+  });
+  
+  rtc.on('channel:closed:chat', function(id, dc) {
+    console.log('channel closed chat');
+    var idx = channels.indexOf(dc);
+    if (idx >= 0) {
+      channels.splice(idx, 1);
+    }
+    
+    document.querySelector('#beacons').innerHTML = '';
   });
   </script>
 </body>
