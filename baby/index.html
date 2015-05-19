@@ -39,7 +39,7 @@
   
   <canvas id="trackr"></canvas>
 
-  <script>
+  <script type="application/javascript;version=1.7">
   
   var cvs = document.querySelector('#trackr');
   var ctx = cvs.getContext('2d');
@@ -90,18 +90,36 @@
     var distanceInPx = DISTANCE_BETWEEN_BEACONS * pixelPerMm * 100;
 
     var iceX = 300, 
-        iceY = 300;
+        iceY = 300,
+        rIce = distance.ice * pixelPerMm * 100 | 0;
     
     var blueberryX = iceX + distanceInPx,
-        blueberryY = iceY;
+        blueberryY = iceY,
+        rBlueberry = distance.blueberry * pixelPerMm * 100 | 0;
     
     var mintX = iceX,
-        mintY = iceY + distanceInPx;
+        mintY = iceY + distanceInPx,
+        rMint = distance.mint * pixelPerMm * 100 | 0;
     
     ctx.lineWidth = 2;
-    drawBeacon('#b0e2ff', iceX, iceY, distance.ice);
-    drawBeacon('#b4d7bf', mintX, mintY, distance.mint);
-    drawBeacon('#4100c2', blueberryX, blueberryY, distance.blueberry);
+    drawBeacon('#b0e2ff', iceX, iceY, rIce);
+    drawBeacon('#b4d7bf', mintX, mintY, rMint);
+    drawBeacon('#4100c2', blueberryX, blueberryY, rBlueberry);
+    
+    var im = intersection(iceX, iceY, rIce, mintX, mintY, rMint);
+    var ib = intersection(iceX, iceY, rIce, blueberryX, blueberryY, rBlueberry);
+    var bm = intersection(blueberryX, blueberryY, rBlueberry, mintX, mintY, rMint);
+    
+    console.log('intersection im', im);
+    console.log('intersection ib', ib);
+    console.log('intersection bm', bm);
+    
+    var intersections = [];
+    intersections.push(getClosest(im, [ib, bm]));
+    intersections.push(getClosest(ib, [im, bm]));
+    intersections.push(getClosest(bm, [ib, im]));
+    
+    intersections.forEach(drawIntersection);
     
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 5;
@@ -112,6 +130,51 @@
     line(blueberryX, blueberryY + 20, blueberryX, blueberryY + distanceInPx);
   }
   
+  function getClosest(curr, others) {
+    // 1 choice?
+    if (!curr[2]) return [curr[0], curr[1]];
+    
+    others = others.reduce(function(c, v) {
+      if (v[2]) {
+        c.push([v[0], v[2]]);
+        c.push([v[1], v[3]]);
+      }
+      else {
+        c.push([v[0], v[1]]);
+      }
+      return c;
+    }, []);
+    
+    var avg = others.reduce(function(c, v) {
+      c.x += v[0];
+      c.y += v[1];
+      return c;
+    }, { x: 0, y: 0 });
+    
+    var otherX = avg.x / others.length;
+    var otherY = avg.y / others.length;
+    
+    let [x1, x2, y1, y2] = curr;
+    
+    if (Math.abs(x1 - otherX) + Math.abs(y1 - otherY) <
+        Math.abs(x2 - otherX) + Math.abs(y2 - otherY)) {
+      return [x1, y1];
+    }
+    else {
+      return [x2, y2];
+    }
+  }
+  
+  function drawIntersection(data) {
+    let [x1, y1] = data;
+    
+    ctx.fillStyle = ctx.strokeStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(x1, y1, 10, 0, Math.PI*2, true);
+    ctx.closePath();
+    ctx.fill();
+  } 
+  
   function line(x, y, endX, endY) {
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -119,9 +182,7 @@
     ctx.stroke();
   }
   
-  function drawBeacon(color, x, y, distance) {
-    distance = distance * pixelPerMm * 100 | 0;
-    
+  function drawBeacon(color, x, y, distanceRadius) {
     ctx.fillStyle = ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.arc(x, y, 10, 0, Math.PI*2, true); 
@@ -129,7 +190,7 @@
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(x, y, distance, 0, Math.PI*2, true); 
+    ctx.arc(x, y, distanceRadius, 0, Math.PI*2, true); 
     ctx.closePath();
     ctx.stroke();
   }
@@ -153,11 +214,39 @@
     /* Check for solvability. */
     if (d > (r0 + r1)) {
         /* no solution. circles do not intersect. */
+        if (y0 === y1) {
+          if (x0 < x1) {
+            return [(x0+r0+x1-r1) /2, y0];
+          }
+          else {
+            return [(x0-r0+x1+r1) / 2, y0];
+          }
+        }
+        else if (x0 === x1) {
+          if (y0 < y1) {
+            return [x0, (y0+r0+y1-r1) / 2];
+          }
+          else {
+            return [x0, (y0-r0+y1-r1) / 2];
+          }
+        }
+        else {
+          return [(x0 + r0 * Math.cos(Math.PI * 0.75) +
+                  x1 + r1 * Math.cos(Math.PI * -0.25)) / 2,
+                  (y0 + r0 * Math.sin(Math.PI * 0.75) +
+                  y1 + r1 * Math.sin(Math.PI * -0.25)) / 2];
+        }
+        
         return false;
     }
     if (d < Math.abs(r0 - r1)) {
-        /* no solution. one circle is contained in the other */
-        return false;
+      /* no solution. one circle is contained in the other */
+      if (r0 < r1) {
+        return [x0, y0];
+      }
+      else {
+        return [x1, y1];
+      }
     }
 
     /* 'point 2' is the point where the line through the circle
