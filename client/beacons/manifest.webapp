@@ -1,0 +1,8 @@
+{
+  "name": "Beacon Client",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "permissions": {
+    "bluetooth": {}
+  }
+}

@@ -82,35 +82,41 @@
       var ele = document.querySelector('*[data-peer=' + e + ']');
     });
   });
-
-  var channels = [];
-  rtc.on('channel:opened:chat', function(id, dc) {
-    console.log('channel opened chat', dc);
-    dc.onmessage = function(evt) {
-      var beacon = JSON.parse(evt.data);
-      
-      var ele = document.querySelector('li[data-major="' + beacon.major + '"]');
-      if (!ele) {
-        ele = document.createElement('li');
-        ele.dataset.major = beacon.major;
-        document.querySelector('#beacons').appendChild(ele);
-      }
-      
-      ele.textContent = beacon.name + ' (' + beacon.distance.toFixed(2) + 'm)';
+  
+  var clientList = {};
+  
+  var wsOpen = false;
+  var ws;
+  function connect() {
+    ws = new WebSocket('ws://' + location.hostname + ':9322');
+    ws.onopen = function() {
+      wsOpen = true;
     };
-  
-    channels.push(dc);
-  });
-  
-  rtc.on('channel:closed:chat', function(id, dc) {
-    console.log('channel closed chat');
-    var idx = channels.indexOf(dc);
-    if (idx >= 0) {
-      channels.splice(idx, 1);
-    }
-    
-    document.querySelector('#beacons').innerHTML = '';
-  });
+    ws.onclose = function() {
+      document.querySelector('#beacons').innerHTML = '';
+
+      wsOpen = false;
+      connect();
+    };
+    ws.onmessage = function(e) {
+      var data = e.data;
+      if (typeof data === 'string') data = JSON.parse(data);
+      
+      if (data.type === 'beacon') {
+        var beacon = data;
+        var ele = document.querySelector('li[data-major="' + beacon.major + '"]');
+        if (!ele) {
+          ele = document.createElement('li');
+          ele.dataset.major = beacon.major;
+          document.querySelector('#beacons').appendChild(ele);
+        }
+        
+        ele.textContent = beacon.name + ' (' + beacon.distance.toFixed(2) + 'm)';
+      }
+    };
+  }
+  connect();
+
   </script>
 </body>
 </html>
