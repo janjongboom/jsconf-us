@@ -14,6 +14,10 @@ function connect() {
 }
 connect();
 
+window.addEventListener('online', function() {
+  if (!wsOpen) connect();
+});
+
 var measurement = {};
 
 function gotBeacon(beacon, rssi) {
