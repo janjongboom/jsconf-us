@@ -1,9 +1,5 @@
 (function() {
-var distance = {
-  ice: 5,
-  mint: 5,
-  blueberry: 5
-};
+var distance = {};
 
 var personData = {
   ice: {
@@ -99,4 +95,77 @@ function connect() {
   };
 }
 connect();
+
+
+
+var step = 0;
+document.addEventListener('keydown', e => {
+  if (e.key === 'PageDown') {
+    step++;
+    renderStep();
+  }
+  else if (e.key === 'PageUp') {
+    step--;
+    renderStep();
+  }
+});
+
+function renderStep() {
+  var steps = {
+    0: {
+      hidden: true
+    },
+    1: {
+      hidden: false
+    },
+    2: {
+      get talk() {
+        return "Hello from Mozilla glass. I am Andreas Gal. CTO of Mozilla.";
+      }
+    },
+    3: {
+      get talk() {
+        return "OK Google";
+        // return "There are " + Object.keys(distance).length + " people around you";
+      }
+    },
+    4: {
+      get talk() {
+        return "Will do!";
+      }
+    },
+    5: {
+      get talk() {
+        var c = document.querySelector('#info');
+        if (c.style.display !== 'block') {
+          return "You're not near anyone";
+        }
+        else {
+          return "You are near " + c.querySelector('.name').textContent;
+        }
+      }
+    },
+    6: {
+      talk: "I'm sorry Jan, I'm afraid I can't do that"
+    }
+  };
+  
+  if (!steps[step]) {
+    step = 0;
+  }
+
+  if (steps[step].hidden !== undefined) {
+    document.querySelector('#andreas').classList.toggle('hidden', steps[step].hidden);
+  }
+  
+  if (steps[step].talk) {
+    document.querySelector('#andreas').classList.add('talking');
+    meSpeak.speak(steps[step].talk, {}, function() {
+       document.querySelector('#andreas').classList.remove('talking');
+    })
+  }
+}
+
+
+
 })();

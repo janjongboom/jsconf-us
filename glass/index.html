@@ -8,7 +8,6 @@
     <!-- Assumes global locations for socket.io.js and easyrtc.js -->
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/easyrtc/easyrtc.js"></script>
-    <script type="text/javascript" src="main.js"></script>
  
   </head>
   <body onload="connect();">
@@ -42,6 +41,11 @@
     </defs>
     </svg>
     
+    <div id="andreas" class="hidden">
+      <img class="top" src="andreas-top.png">
+      <img class="bottom" src="andreas-bottom.png">
+    </div>
+    
     <div id="info" style="display: none">
       <div class="flex-row">
         <img class="face">
@@ -64,6 +68,9 @@
       <div class="last-tweet"></div>
     </div>
     
+    <script src="mespeak/mespeak.js"></script>
+    <script src="main.js"></script>
     <script src="beacon.js"></script>
   </body>
 </html>
+ 

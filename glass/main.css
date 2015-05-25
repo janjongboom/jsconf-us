@@ -94,3 +94,25 @@ body {
   background: transparent url("twitter.png") no-repeat scroll right center / 30px auto;
   padding-right: 45px;
 }
+
+#andreas {
+  width: 297px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 50px;
+  bottom: 100px;
+  z-index:10;
+}
+#andreas.talking .top {
+  animation: talk .2s infinite;
+}
+@keyframes talk {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(-20px); }
+}
+
+#andreas.hidden {
+  display: none;
+}
