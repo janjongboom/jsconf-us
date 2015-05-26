@@ -71,7 +71,7 @@
   };
   
   function calcDistance(rssi) {
-    var txPower = -70;
+    var txPower = -80;
     if (rssi === 0) {
       return -1.0;
     }
@@ -358,39 +358,39 @@
   
   <script>
   
-    a = Mono({ attack:44, decay:1/8 })
-    .cutoff.seq( Rndf(0,.6), 1/2 )
-    .note.seq( Rndi(0,24), [ 1/8, 1/16 ].rnd( 1/16,2 ) )
+    // a = Mono({ attack:44, decay:1/8 })
+    // .cutoff.seq( Rndf(0,.6), 1/2 )
+    // .note.seq( Rndi(0,24), [ 1/8, 1/16 ].rnd( 1/16,2 ) )
       
-    a.seq.scale = Scale('c1', 'Shruti')
+    // a.seq.scale = Scale('c1', 'Shruti')
     
-    b = Drums('x*o*x*o-')
-    .pan.seq( Rndf(-1,1), 1/8 )
-    .pitch.seq( Rndf(.8, 1.2), 1/8 )
+    // b = Drums('x*o*x*o-')
+    // .pan.seq( Rndf(-1,1), 1/8 )
+    // .pitch.seq( Rndf(.8, 1.2), 1/8 )
     
-    c = FM({ attack:44, cmRatio:3, maxVoices:4, amp:.1 })
-    c.chord.seq( ['c4maj7', 'd4maj7'], 1)
-    c.fx.add( Vibrato(), Distortion() )
+    // c = FM({ attack:44, cmRatio:3, maxVoices:4, amp:.1 })
+    // c.chord.seq( ['c4maj7', 'd4maj7'], 1)
+    // c.fx.add( Vibrato(), Distortion() )
     
-    c.fx[0].rate.seq( Rndf(.25,10), 1 )
+    // c.fx[0].rate.seq( Rndf(.25,10), 1 )
     
-    d = Mono({ attack:44, decay:1/2, glide:.99995, amp:.35, cutoff:0 })
-    .note.seq( Rndi(0,12), [1/4,1/2,1,2].random() )
-    .fx.add( Delay(1/8), Reverb() )
+    // d = Mono({ attack:44, decay:1/2, glide:.99995, amp:.35, cutoff:0 })
+    // .note.seq( Rndi(0,12), [1/4,1/2,1,2].random() )
+    // .fx.add( Delay(1/8), Reverb() )
       
-    d.seq.scale = Scale('c4', 'Shruti')
+    // d.seq.scale = Scale('c4', 'Shruti')
     
-    setInterval(function() {
-      var x = Number(window.fromCenterX);
-      var y = Number(window.fromCenterY);
+    // setInterval(function() {
+    //   var x = Number(window.fromCenterX);
+    //   var y = Number(window.fromCenterY);
       
-      if (isNaN(x) || isNaN(y)) return;
+    //   if (isNaN(x) || isNaN(y)) return;
       
-      var avg = (x + y) / (250 + 250) * 0.5;
-      if (x > 250 || y > 250) avg += 0.5;
+    //   var avg = (x + y) / (250 + 250) * 0.5;
+    //   if (x > 250 || y > 250) avg += 0.5;
       
-      Clock.bpm = (avg * 80 | 0) + 60;
-    }, 500);
+    //   Clock.bpm = (avg * 80 | 0) + 60;
+    // }, 500);
 
   </script>
 </body>

@@ -1,7 +1,7 @@
 var wsOpen = false;
 var ws;
 function connect() {
-  ws = new WebSocket('ws://192.168.2.115:9322');
+  ws = new WebSocket('ws://192.168.2.4:9322');
   ws.onopen = function() {
     wsOpen = true;
     document.querySelector('#status').textContent = 'Connected';

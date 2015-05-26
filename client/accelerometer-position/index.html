@@ -52,6 +52,11 @@
       });
     }
     var deviceId = getUuid();
+    var color = [
+      (Math.random() * 3 | 0) / 3 * 255,
+      (Math.random() * 3 | 0) / 3 * 255,
+      (Math.random() * 3 | 0) / 3 * 255
+    ];
 
     if ('requestWakeLock' in navigator) {
       var lock = navigator.requestWakeLock('screen');
@@ -84,6 +89,7 @@
     connect();
 
     var dot = document.querySelector('#dot');
+    dot.style.background = 'rgb(' + color.join(', ') + ')';
 
     window.addEventListener('deviceorientation', function(e) {
       var beta = e.beta;
@@ -103,6 +109,7 @@
           alpha: e.alpha,
           beta: e.beta,
           gamma: e.gamma,
+          color: color,
           deviceId: deviceId
         }));
       }
