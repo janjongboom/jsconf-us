@@ -21,10 +21,19 @@
       top: 0;
       left: 0;
     }
+    #russian {
+      z-index: 3;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      left: inherit;
+      top: inherit;
+    }
   </style>
 </head>
 
 <body>
+  <canvas id="russian" width="320" height="240"></canvas>
   <p id="connected">Clients connected: <span id="clients">0</span></p>
   <script src="require.js"></script>
   <script>
@@ -68,8 +77,19 @@
         a.fill( barColor.rgbString() ) 
       }
     }
-
   </script>
   <script src="socket.js"></script>
+  <script src="gifplayer.js"></script>
+  <script>
+    // createGifPlayer('party-time.gif', document.querySelector('#russian'))
+    //   .then(a => {
+    //     setInterval(function() {
+    //       a.playbackTimeout = 1000 / ((getAvg().top * 120 | 0) + 60) * 6;
+    //     }, 500);
+    //   })
+    //   .catch(err => {
+    //     console.error('Cannot create player', err);
+    //   });
+  </script>
 </body>
 </html>
