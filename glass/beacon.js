@@ -1,8 +1,7 @@
 (function() {
 var distance = {};
 
-var personData = {
-  ice: {
+var jan = {
     photo: 'people/jan.jpg',
     name: 'Jan Jongboom',
     company: 'Telenor Digital',
@@ -11,11 +10,60 @@ var personData = {
     twitter: 958,
     github: 118,
     lastTweet: 'Bluetooth LE support is in #FirefoxOS. Here\'s how to scan for iBeacons!'
-  }
+  };
+
+var steve = {
+  photo: 'people/steve.png',
+  name: 'Steve Kinney',
+  company: 'Turing School of Software and Design',
+  description: 'Millennial JavaScript dad. Teaches Ruby and JavaScript to aspiring web developers.',
+  descriptionSource: 'stevekinney.net',
+  twitter: '1,944',
+  github: 49,
+  lastTweet: 'Make music with your face http://stevekinney.github.io/face-theremin/ :D #jsconf'
+};
+
+var jacob = {
+  photo: 'people/jacob.png',
+  name: 'Jacob Roufa',
+  company: 'QuietLight Communications',
+  description: 'Building sweet websites since 2007. Coffee lover. Beard admirer.',
+  descriptionSource: 'jacobroufa.com',
+  twitter: 177,
+  github: 9,
+  lastTweet: 'Live 80s cover band playing The Cure.. My #jsconf experience is fully realized.'
+};
+
+var chris = {
+  photo: 'people/chris.png',
+  name: 'Chris Williams',
+  company: 'JSConf Overlord',
+  description: 'The Phil Collins of Node & Hardware. Has conference visitors build his army of killer robots.',
+  descriptionSource: 'twitter.com',
+  twitter: '5,990',
+  github: 469,
+  lastTweet: 'The #jsconf happy hour is now open at the same place you early registered for the conference. Out by the pool. Free beverages!'
+};
+
+var john = {
+  photo: 'people/john.png',
+  name: 'John Brown',
+  company: 'Instrument',
+  description: 'Creates code art along the way. Co-organize PDX Creative Coders.',
+  descriptionSource: 'thisisjohnbrown.com/',
+  twitter: '813',
+  github: 40,
+  lastTweet: 'Code Artist John Brown gives us a sneak peek for Union/Pine May 28-29th #TEDxPDX'
+};
+
+var personData = {
+  ice: steve,
+  blueberry: jacob,
+  mint: chris
 };
 
 function calcDistance(rssi) {
-  var txPower = -70;
+  var txPower = -72;
   if (rssi === 0) {
     return -1.0;
   }

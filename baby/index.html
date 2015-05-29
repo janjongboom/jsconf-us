@@ -53,7 +53,7 @@
   var ctx = cvs.getContext('2d');
   var pixelPerMm = 1;
   // in meters
-  var DISTANCE_BETWEEN_BEACONS = 5.00;
+  var DISTANCE_BETWEEN_BEACONS = 3.00;
   
   window.onresize = () => {
     vw = window.innerWidth;
@@ -71,7 +71,7 @@
   };
   
   function calcDistance(rssi) {
-    var txPower = -80;
+    var txPower = -72;
     if (rssi === 0) {
       return -1.0;
     }
